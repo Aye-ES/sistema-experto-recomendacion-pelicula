@@ -2,6 +2,10 @@ import sqlite3
 from pgmpy.models import BayesianModel
 from pgmpy.factors.discrete import TabularCPD
 
+#para encriptado de password
+import hashlib
+import os
+
 # Conectar a la base de datos SQLite
 def connect_to_database():
     conn = sqlite3.connect('database.db')
@@ -15,7 +19,9 @@ conn, cursor = connect_to_database()
 cursor.execute('''CREATE TABLE IF NOT EXISTS Usuario (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT,
-                    email TEXT)''')
+                    email TEXT,
+                    password TEXT)''')
+
 
 # Tabla RecomendacionPelicula
 cursor.execute('''CREATE TABLE IF NOT EXISTS RecomendacionPelicula (
@@ -59,15 +65,20 @@ def close_connection(conn):
 
 
 
+# Función para encriptar la contraseña
+def encrypt_password(password):
+    salt = os.urandom(16)  # Generar un salt aleatorio de 16 bytes
+    password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    return salt.hex() + password_hash.hex()
 
 # Ejemplo de recolección de datos y guardado en la base de datos
 
 def collect_usuario_data():
     usuario_data = [
-        #("Leandro", "leandro@gmail.com"),
+        ("Leandro", "leandro@gmail.com", encrypt_password("1234")),
         # Agrega más datos de usuario aquí
     ]
-    cursor.executemany('INSERT INTO Usuario (nombre, email) VALUES (?, ?)', usuario_data)
+    cursor.executemany('INSERT INTO Usuario (nombre, email, password) VALUES (?, ?, ?)', usuario_data)
 
 def collect_recomendacion_data():
     recomendacion_data = [
