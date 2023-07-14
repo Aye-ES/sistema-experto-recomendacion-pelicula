@@ -10,10 +10,11 @@ def connect_to_database():
 conn, cursor = connect_to_database()
 
 # Tabla Usuario
-cursor.execute('''CREATE TABLE IF aNOT EXISTS Usuario (
+cursor.execute('''CREATE TABLE IF NOT EXISTS Usuario (
                     id INTEGER PRIMARY KEY,
                     nombre TEXT,
                     email TEXT)''')
+
 
 # Tabla RecomendacionPelicula
 cursor.execute('''CREATE TABLE IF NOT EXISTS RecomendacionPelicula (
@@ -63,10 +64,26 @@ def create_usuario(nombre, email):
     cursor.execute("INSERT INTO Usuario (nombre, email) VALUES (?, ?)", (nombre, email))
     conn.commit()
 
+
+# Función para eliminar un usuario
+def delete_usuario(usuario_id):
+    # Eliminar el usuario de la tabla Usuario
+    cursor.execute("DELETE FROM Usuario WHERE id = ?", (usuario_id,))
+    conn.commit()
+    
+    
+    
+    
+    
 # Ejemplo de creación de usuario
-nombre = "Neil Edson Chilimani Cuellar"
-email = "neil20cuellar1@gmail.com"
+nombre = "Susana Estevez Segovia"
+email = "susana@gmail.com"
 create_usuario(nombre, email)
+
+
+# Ejemplo de eliminación de usuario
+#usuario_id = 6
+#delete_usuario(usuario_id)
 
 # Cerrar la conexión a la base de datos
 close_connection(conn)

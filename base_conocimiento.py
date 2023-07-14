@@ -1,25 +1,5 @@
-from pyknow import *
 from pgmpy.models import BayesianModel
 from pgmpy.factors.discrete import TabularCPD
-
-# Definición de clases
-class Usuario(Fact):
-    pass
-
-class RecomendacionPelicula(Fact):
-    pass
-
-class Calificacion(Fact):
-    pass
-
-class Pelicula(Fact):
-    pass
-
-class Clasificacion(Fact):
-    pass
-
-class Genero(Fact):
-    pass
 
 # Definir la base de conocimiento utilizando redes bayesianas
 def create_bayesian_model():
@@ -27,7 +7,7 @@ def create_bayesian_model():
     modelo_bayesiano = BayesianModel()
 
     # Definir las variables
-    variables = ["Usuario", "Genero", "Calificacion", "RecomendacionPelicula"]
+    variables = ["Usuario", "Genero", "Calificacion", "RecomendacionPelicula", "Clasificacion", "Pelicula"]
 
     # Agregar las variables al modelo
     modelo_bayesiano.add_nodes_from(variables)
@@ -36,7 +16,10 @@ def create_bayesian_model():
     modelo_bayesiano.add_edges_from([
         ("Usuario", "Calificacion"),
         ("Genero", "RecomendacionPelicula"),
-        ("Calificacion", "RecomendacionPelicula")
+        ("Calificacion", "RecomendacionPelicula"),
+        ("Clasificacion", "Pelicula"),
+        ("Genero", "Pelicula"),
+        ("Calificacion", "Pelicula")
     ])
 
     # Definir las distribuciones de probabilidad condicional (CPDs) de las variables
@@ -58,7 +41,16 @@ def create_bayesian_model():
                                    evidence=["Genero", "Calificacion"],
                                    evidence_card=[2, 2])
 
+    # Definir CPD para la variable "Clasificacion"
+    cpd_clasificacion = TabularCPD(variable="Clasificacion", variable_card=2, values=[[0.5, 0.5]])
+
+    # Definir CPD para la variable "Pelicula"
+    cpd_pelicula = TabularCPD(variable="Pelicula", variable_card=2,
+                              values=[[0.3, 0.7], [0.6, 0.4], [0.8, 0.2], [0.1, 0.9]],
+                              evidence=["Clasificacion", "Genero", "Calificacion"],
+                              evidence_card=[2, 2, 2])
+
     # Asociar los CPDs al modelo
-    modelo_bayesiano.add_cpds(cpd_usuario, cpd_genero, cpd_calificacion, cpd_recomendacion)
+    modelo_bayesiano.add_cpds(cpd_usuario, cpd_genero, cpd_calificacion, cpd_recomendacion, cpd_clasificacion, cpd_pelicula)
 
     return modelo_bayesiano
