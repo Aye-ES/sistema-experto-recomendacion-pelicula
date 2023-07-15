@@ -23,7 +23,7 @@ def create_bayesian_model():
 
     # Definir las distribuciones de probabilidad condicional (CPDs) de las variables
 
-    # Definir CPD para la variable "Usuario"
+     # Definir CPD para la variable "Usuario"
     cpd_usuario = TabularCPD(variable="Usuario", variable_card=2, values=[[0.6, 0.4]])
 
     # Definir CPD para la variable "RecomendacionPelicula"
@@ -55,6 +55,7 @@ def create_bayesian_model():
                               cpd_genero)
 
     return modelo_bayesiano
+
 
 # Crear la base de conocimiento utilizando el modelo bayesiano
 base_conocimiento = create_bayesian_model()
