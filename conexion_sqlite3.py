@@ -1,6 +1,11 @@
 import sqlite3
+
+import pgmpy
+print("Versión de pgmpy:", pgmpy.__version__)
+
 from pgmpy.models import BayesianModel
 from pgmpy.factors.discrete import TabularCPD
+
 
 # para encriptado de contraseña
 import hashlib
@@ -71,7 +76,7 @@ def close_connection(conn):
 def encrypt_password(password):
     salt = os.urandom(16)  # Generar un salt aleatorio de 16 bytes
     password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return salt.hex() + password_hash.hex()
+    return salt + password_hash
 
 
 # Ejemplo de recolección de datos y guardado en la base de datos
@@ -160,66 +165,6 @@ collect_genero_data()
 
 # Guardar los cambios en la base de datos
 conn.commit()
-
-# Consulta para mostrar los nombres en lugar de IDs en la tabla RecomendacionPelicula
-cursor.execute('''
-    SELECT Usuario.nombre, Pelicula.titulo
-    FROM RecomendacionPelicula
-    JOIN Usuario ON RecomendacionPelicula.usuario_id = Usuario.id
-    JOIN Pelicula ON RecomendacionPelicula.pelicula_id = Pelicula.id
-''')
-recomendaciones = cursor.fetchall()
-print("Recomendaciones:")
-for recomendacion in recomendaciones:
-    print(f"Usuario: {recomendacion[0]}, Película: {recomendacion[1]}")
-
-
-# Consulta para mostrar los nombres en lugar de IDs en la tabla Usuario
-cursor.execute('SELECT nombre, email, password, edad FROM Usuario')
-usuarios = cursor.fetchall()
-print("\nTabla Usuario:")
-for usuario in usuarios:
-    print(f"Nombre: {usuario[0]}, Email: {usuario[1]}, Password: {usuario[2]}, Edad: {usuario[3]}")
-
-# Consulta para mostrar los nombres en lugar de IDs en la tabla Pelicula
-cursor.execute('''
-    SELECT titulo, director, Clasificacion.nombre, Genero.nombre
-    FROM Pelicula
-    JOIN Clasificacion ON Pelicula.clasificacion_id = Clasificacion.id
-    JOIN Genero ON Pelicula.genero_id = Genero.id
-''')
-peliculas = cursor.fetchall()
-print("\nTabla Pelicula:")
-for pelicula in peliculas:
-    print(f"Título: {pelicula[0]}, Director: {pelicula[1]}, Clasificación: {pelicula[2]}, Género: {pelicula[3]}")
-
-# Consulta para mostrar los nombres en lugar de IDs en la tabla Clasificacion
-cursor.execute('SELECT nombre FROM Clasificacion')
-clasificaciones = cursor.fetchall()
-print("\nTabla Clasificacion:")
-for clasificacion in clasificaciones:
-    print(f"Nombre: {clasificacion[0]}")
-
-# Consulta para mostrar los nombres en lugar de IDs en la tabla Genero
-cursor.execute('SELECT nombre FROM Genero')
-generos = cursor.fetchall()
-print("\nTabla Genero:")
-for genero in generos:
-    print(f"Nombre: {genero[0]}")
-
-
-# Consulta para mostrar los nombres en lugar de IDs en la tabla Calificacion
-cursor.execute('''
-    SELECT Usuario.nombre, Pelicula.titulo, Calificacion.descripcion
-    FROM Calificacion
-    JOIN Usuario ON Calificacion.usuario_id = Usuario.id
-    JOIN Pelicula ON Calificacion.pelicula_id = Pelicula.id
-''')
-calificaciones = cursor.fetchall()
-print("\nCalificaciones:")
-for calificacion in calificaciones:
-    print(f"Usuario: {calificacion[0]}, Película: {calificacion[1]}, Descripción: {calificacion[2]}")
-
 
 # Cerrar la conexión a la base de datos
 close_connection(conn)
