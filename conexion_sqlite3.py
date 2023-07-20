@@ -72,12 +72,11 @@ def close_connection(conn):
     conn.close()
 
 
-# Función para encriptar la contraseña
+# conexion_sqlite3.py
 def encrypt_password(password):
     salt = os.urandom(16)  # Generar un salt aleatorio de 16 bytes
     password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return salt + password_hash
-
+    return salt.hex() + password_hash.hex()
 
 # Ejemplo de recolección de datos y guardado en la base de datos
 
@@ -152,6 +151,16 @@ def collect_genero_data():
         # Agrega más datos de género aquí
     ]
     cursor.executemany('INSERT INTO Genero (nombre) VALUES (?)', genero_data)
+
+
+
+
+#registro usuario nuevo
+#def registrar_usuario(nombre, email, password, edad):
+ #   password_encriptada = encrypt_password(password)
+  #  cursor.execute('INSERT INTO Usuario (nombre, email, password, edad) VALUES (?, ?, ?, ?)', (nombre, email, password_encriptada, edad))
+   # conn.commit()
+
 
 
 # Ejecutar las funciones de recolección de datos

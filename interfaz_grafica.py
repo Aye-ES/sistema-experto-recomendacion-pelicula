@@ -1,119 +1,115 @@
+# interfaz_usuario.py
 import tkinter as tk
 import sqlite3
+from motor_inferencia import verificar_credenciales
 
-
-# Función para iniciar sesión
 def login():
-    # Obtener los valores de correo electrónico y contraseña ingresados por el usuario
     email = email_var.get()
     password = password_var.get()
 
-    # Realizar la lógica de autenticación y validación de datos
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-
-    # Verificar si el correo electrónico y la contraseña coinciden en la base de datos
-    cursor.execute('SELECT * FROM Usuario WHERE email = ? AND password = ?', (email, password))
-    user = cursor.fetchone()
-
-    if user:
-        # Cerrar la conexión a la base de datos
-        conn.close()
-        login_window.destroy()  # Cerrar la ventana de inicio de sesión
-
-        # Mostrar mensaje de éxito
-        success_label = tk.Label(login_window, text="Inicio de sesión exitoso", fg="green")
-        success_label.place(relx=0.5, rely=0.9, anchor="center")
-
-        # Aquí puedes continuar con la lógica de tu programa, como mostrar la ventana principal, realizar recomendaciones, etc.
-        show_main_window()
+    nombre_usuario = verificar_credenciales(email, password)
+    if nombre_usuario:
+        show_main_window(nombre_usuario)
     else:
-        # Cerrar la conexión a la base de datos
-        conn.close()
-
-        # Mostrar mensaje de error
         error_label = tk.Label(login_window, text="Credenciales incorrectas", fg="red")
         error_label.place(relx=0.5, rely=0.9, anchor="center")
+        login_window.after(2000, error_label.destroy)
 
-    # Cerrar la ventana de inicio de sesión después de verificar las credenciales
-    login_window.after(2000, login_window.destroy)
+def show_main_window(nombre_usuario):
+    main_window = tk.Tk()
+    main_window.title("Sistema de Películas")
+    main_window.geometry("600x400")
 
+    # Bienvenida
+    welcome_label = tk.Label(main_window, text=f"Bienvenido, {nombre_usuario}!", font=("Arial", 16))
+    welcome_label.pack(pady=20)
 
-# Ventana de inicio de sesión
+    # Primera sección
+    frame_seccion1 = tk.Frame(main_window)
+    frame_seccion1.pack(pady=20)
+
+    pelicula_label = tk.Label(frame_seccion1, text="Película Favorita:")
+    pelicula_label.pack(side=tk.LEFT, padx=10)
+
+    pelicula_var = tk.StringVar()
+    pelicula_entry = tk.Entry(frame_seccion1, textvariable=pelicula_var)
+    pelicula_entry.pack(side=tk.LEFT, padx=10)
+
+    # Segunda sección
+    frame_seccion2 = tk.Frame(main_window)
+    frame_seccion2.pack(pady=20)
+
+    # Menú desplegable de género
+    generos = obtener_generos()  # Obtener los géneros de la base de datos
+    genero_var = tk.StringVar()
+    genero_var.set(generos[0])  # Establecer el valor inicial del menú al primer género
+    genero_menu = tk.OptionMenu(frame_seccion2, genero_var, *generos)
+    genero_menu.pack(side=tk.LEFT, padx=10)
+
+    # Menú desplegable de clasificación
+    clasificaciones = obtener_clasificaciones()  # Obtener las clasificaciones de la base de datos
+    clasificacion_var = tk.StringVar()
+    clasificacion_var.set(clasificaciones[0])  # Establecer el valor inicial del menú a la primera clasificación
+    clasificacion_menu = tk.OptionMenu(frame_seccion2, clasificacion_var, *clasificaciones)
+    clasificacion_menu.pack(side=tk.LEFT, padx=10)
+
+    main_window.mainloop()
+
+def obtener_generos():
+    # Función para obtener los géneros desde la base de datos
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT nombre FROM Genero')
+    generos = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+    return generos
+
+def obtener_clasificaciones():
+    # Función para obtener las clasificaciones desde la base de datos
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT nombre FROM Clasificacion')
+    clasificaciones = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+    return clasificaciones
+
 def show_login_window():
-    global email_var, password_var, login_window  # Definir las variables como globales
+    global email_var, password_var, login_window
 
     login_window = tk.Tk()
-
-    # Configurar la ventana de inicio de sesión
     login_window.title("Inicio de sesión")
-    login_window.configure(bg="lightgray")  # Establecer el color de fondo
+    login_window.configure(bg="lightgray")
 
-    # Obtener el tamaño de la pantalla
     screen_width = login_window.winfo_screenwidth()
     screen_height = login_window.winfo_screenheight()
-
-    # Calcular las coordenadas para centrar la ventana en la pantalla
     window_width = 400
     window_height = 300
     x = (screen_width // 2) - (window_width // 2)
     y = (screen_height // 2) - (window_height // 2)
-
-    # Establecer la geometría de la ventana
     login_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-    # Variables de control para los campos de correo electrónico y contraseña
     email_var = tk.StringVar()
     password_var = tk.StringVar()
 
-    # Crear etiqueta y campo de entrada para correo electrónico
     email_label = tk.Label(login_window, text="Correo electrónico:")
     email_label.place(relx=0.5, rely=0.35, anchor="center")
     email_entry = tk.Entry(login_window, textvariable=email_var)
     email_entry.place(relx=0.5, rely=0.4, anchor="center")
 
-    # Crear etiqueta y campo de entrada para contraseña
     password_label = tk.Label(login_window, text="Contraseña:")
     password_label.place(relx=0.5, rely=0.55, anchor="center")
     password_entry = tk.Entry(login_window, show="*", textvariable=password_var)
     password_entry.place(relx=0.5, rely=0.6, anchor="center")
 
-    # Crear botón de inicio de sesión
     login_button = tk.Button(login_window, text="Iniciar sesión", command=login)
     login_button.place(relx=0.5, rely=0.75, anchor="center")
 
-    # Ejecutar el bucle principal de la ventana de inicio de sesión
     login_window.mainloop()
-    #############################################
 
-
-
-
-
-    
-# Ventana de registro de usuario
-def show_register_window():
-    register_window = tk.Tk()
-    # Configurar la ventana de registro de usuario
-    # ...
-    register_window.mainloop()
-
-# Ventana principal
-def show_main_window():
-    main_window = tk.Tk()
-    # Configurar la ventana principal
-    # ...
-    main_window.mainloop()
-
-
-
-
-
-# Función principal
 def main():
-    # Lógica principal del programa
     show_login_window()
 
-# Punto de entrada del programa
 if __name__ == "__main__":
     main()
