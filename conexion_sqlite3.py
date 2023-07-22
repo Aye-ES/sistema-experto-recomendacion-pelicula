@@ -3,8 +3,8 @@ import sqlite3
 import pgmpy
 print("Versión de pgmpy:", pgmpy.__version__)
 
-from pgmpy.models import BayesianModel
-from pgmpy.factors.discrete import TabularCPD
+#from pgmpy.models import BayesianModel
+#from pgmpy.factors.discrete import TabularCPD
 
 
 # para encriptado de contraseña
@@ -77,6 +77,7 @@ def encrypt_password(password):
     salt = os.urandom(16)  # Generar un salt aleatorio de 16 bytes
     password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
     return salt.hex() + password_hash.hex()
+
 
 # Ejemplo de recolección de datos y guardado en la base de datos
 

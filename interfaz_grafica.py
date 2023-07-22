@@ -2,6 +2,35 @@
 import tkinter as tk
 import sqlite3
 from motor_inferencia import verificar_credenciales
+#from base_conocimiento import recomendar_pelicula
+from base_conocimiento import recomendar_pelicula
+
+genero_var = None
+clasificacion_var = None
+#titulo_pelicula_recomendada = None
+#director_pelicula_recomendada = None
+main_window = None
+###############################
+def obtener_recomendacion():
+    genero_seleccionado = genero_var.get()
+    clasificacion_seleccionada = clasificacion_var.get()
+
+    # Llamar a la función para obtener la recomendación de película
+    pelicula_recomendada = recomendar_pelicula(genero_seleccionado, clasificacion_seleccionada)
+
+    if pelicula_recomendada:
+        # Obtener el título y el director de la película recomendada
+        titulo_pelicula_recomendada = pelicula_recomendada["titulo"]
+        director_pelicula_recomendada = pelicula_recomendada["director"]
+
+        # Mostrar la recomendación en la interfaz gráfica
+        recomendacion_label = tk.Label(main_window, text=f"Película recomendada: {titulo_pelicula_recomendada} (Director: {director_pelicula_recomendada})", font=("Arial", 12))
+        recomendacion_label.pack(pady=10)
+    else:
+        # Si no hay recomendación, mostrar un mensaje
+        recomendacion_label = tk.Label(main_window, text="No se encontró una película recomendada para los criterios seleccionados.", font=("Arial", 12))
+        recomendacion_label.pack(pady=10)
+        #####################################333
 
 def login():
     email = email_var.get()
@@ -16,6 +45,8 @@ def login():
         login_window.after(2000, error_label.destroy)
 
 def show_main_window(nombre_usuario):
+    global main_window, genero_var, clasificacion_var  # Agregamos las variables globales aquí
+
     main_window = tk.Tk()
     main_window.title("Sistema de Películas")
     main_window.geometry("600x400")
@@ -52,8 +83,15 @@ def show_main_window(nombre_usuario):
     clasificacion_var.set(clasificaciones[0])  # Establecer el valor inicial del menú a la primera clasificación
     clasificacion_menu = tk.OptionMenu(frame_seccion2, clasificacion_var, *clasificaciones)
     clasificacion_menu.pack(side=tk.LEFT, padx=10)
+    
+   ###############3
+    recomendar_button = tk.Button(main_window, text="Recomendar Película", command=obtener_recomendacion)
+    recomendar_button.pack(pady=10)
+############################
 
     main_window.mainloop()
+
+
 
 def obtener_generos():
     # Función para obtener los géneros desde la base de datos
