@@ -1,6 +1,6 @@
 import random
 
-# Lista de películas ficticias (puedes agregar más)
+# Lista de películas  (puedes agregar más)
 peliculas = [
     {"titulo": "Francotirador", "director": "Clint Eastwood", "genero": "Acción", "clasificacion": "Personas mayores de 15 años"},
     {"titulo": "Atraccion Peligrosa", "director": "Ben Affleck", "genero": "Suspenso", "clasificacion": "Personas mayores de 15 años"},
@@ -8,6 +8,7 @@ peliculas = [
     {"titulo": "Corazonada", "director": "Alejandro Montiel", "genero": "Suspenso", "clasificacion": "Personas mayores de 15 años"},
     {"titulo": "Harry Potter", "director": "Chris Columbus", "genero": "Fantasía", "clasificacion": "Personas mayores de 15 años"},
 ]
+
 
 def recomendar_pelicula(genero_seleccionado, clasificacion_seleccionada):
     # Filtrar películas que coincidan con el género y clasificación seleccionados

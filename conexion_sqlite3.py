@@ -1,7 +1,5 @@
 import sqlite3
 
-import pgmpy
-print("Versión de pgmpy:", pgmpy.__version__)
 
 #from pgmpy.models import BayesianModel
 #from pgmpy.factors.discrete import TabularCPD
@@ -88,6 +86,7 @@ def collect_usuario_data():
         ("Neil", "neil20cuellar1@gmail.com", encrypt_password("neil"), 22),
         ("Susane", "susane@gmail.com", encrypt_password("susane"), 23),
         ("Carlos", "carlos@gmail.com", encrypt_password("carlos"), 27),
+      
         # Agrega más datos de usuario aquí
     ]
     cursor.executemany('INSERT INTO Usuario (nombre, email, password, edad) VALUES (?, ?, ?, ?)', usuario_data)
@@ -147,7 +146,7 @@ def collect_genero_data():
         ("Acción",),
         ("Suspenso",),
         ("Ciencia Ficción",),
-        ("Suspenso",),
+        ("Comedia",),
         ("Fantasía",),
         # Agrega más datos de género aquí
     ]
